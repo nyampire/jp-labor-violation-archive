@@ -200,6 +200,46 @@ a:hover {
     font-weight: 600;
 }
 
+/* データ欠損期間の注意書き */
+.data-gap-notice {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.data-gap-notice h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #92400e;
+    margin-bottom: 0.75rem;
+}
+
+.data-gap-notice p {
+    font-size: 0.9rem;
+    color: #78350f;
+    margin-bottom: 0.5rem;
+}
+
+.data-gap-notice ul {
+    font-size: 0.9rem;
+    color: #78350f;
+    margin-left: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.data-gap-notice li {
+    margin-bottom: 0.25rem;
+}
+
+.data-gap-notice code {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
 /* フッター */
 footer {
     text-align: center;

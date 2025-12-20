@@ -74,9 +74,23 @@
             <table class="coverage-table">
                 <tr><th>期間</th><th>ソース</th><th>状況</th></tr>
                 <tr><td>2017年5月〜2018年7月</td><td>Wayback Machine</td><td>✅</td></tr>
-                <tr><td>2018年8月〜2020年1月</td><td>-</td><td>❌ ギャップ</td></tr>
-                <tr><td>2020年2月〜現在</td><td>H-CRISIS / 厚労省</td><td>✅</td></tr>
+                <tr><td>2018年8月〜2020年11月</td><td>-</td><td>❌ データ欠損期間</td></tr>
+                <tr><td>2020年12月〜現在</td><td>H-CRISIS / 厚労省</td><td>✅</td></tr>
             </table>
+            
+            <div class="data-gap-notice">
+                <h4>⚠️ データ欠損期間について</h4>
+                <p>
+                    2018年8月〜2020年11月の期間は、PDFデータが取得できていないため、この期間をまたぐレコードの情報は不正確な可能性があります。
+                </p>
+                <ul>
+                    <li><strong>掲載終了日（last_appeared）</strong>: 実際より遅い日付になっている可能性</li>
+                    <li><strong>掲載日数（duration_days）</strong>: 実際より長くなっている可能性</li>
+                </ul>
+                <p>
+                    該当するレコードには <code>crossed_data_gap=true</code> フラグが付いています。
+                </p>
+            </div>
         </section>
     </main>
     

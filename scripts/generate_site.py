@@ -187,9 +187,23 @@ def generate_index_html(docs_dir: Path, stats: dict):
             <table class="coverage-table">
                 <tr><th>期間</th><th>ソース</th><th>状況</th></tr>
                 <tr><td>2017年5月〜2018年7月</td><td>Wayback Machine</td><td>✅</td></tr>
-                <tr><td>2018年8月〜2020年1月</td><td>-</td><td>❌ ギャップ</td></tr>
-                <tr><td>2020年2月〜現在</td><td>H-CRISIS / 厚労省</td><td>✅</td></tr>
+                <tr><td>2018年8月〜2020年11月</td><td>-</td><td>❌ データ欠損期間</td></tr>
+                <tr><td>2020年12月〜現在</td><td>H-CRISIS / 厚労省</td><td>✅</td></tr>
             </table>
+            
+            <div class="data-gap-notice">
+                <h4>⚠️ データ欠損期間について</h4>
+                <p>
+                    2018年8月〜2020年11月の期間は、PDFデータが取得できていないため、この期間をまたぐレコードの情報は不正確な可能性があります。
+                </p>
+                <ul>
+                    <li><strong>掲載終了日（last_appeared）</strong>: 実際より遅い日付になっている可能性</li>
+                    <li><strong>掲載日数（duration_days）</strong>: 実際より長くなっている可能性</li>
+                </ul>
+                <p>
+                    該当するレコードには <code>crossed_data_gap=true</code> フラグが付いています。
+                </p>
+            </div>
         </section>
     </main>
     
@@ -414,6 +428,46 @@ a:hover {
 .coverage-table th {
     background: var(--bg-color);
     font-weight: 600;
+}
+
+/* データ欠損期間の注意書き */
+.data-gap-notice {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.data-gap-notice h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #92400e;
+    margin-bottom: 0.75rem;
+}
+
+.data-gap-notice p {
+    font-size: 0.9rem;
+    color: #78350f;
+    margin-bottom: 0.5rem;
+}
+
+.data-gap-notice ul {
+    font-size: 0.9rem;
+    color: #78350f;
+    margin-left: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.data-gap-notice li {
+    margin-bottom: 0.25rem;
+}
+
+.data-gap-notice code {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
 }
 
 /* フッター */

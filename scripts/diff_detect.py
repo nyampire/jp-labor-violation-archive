@@ -49,7 +49,8 @@ def load_appearances(filepath: Path) -> pd.DataFrame:
         return pd.DataFrame(columns=[
             "company_name", "location", "labor_bureau",
             "first_appeared", "last_appeared", "duration_days",
-            "violation_law", "violation_summary", "prosecution_date", "status"
+            "violation_law", "violation_summary", "prosecution_date", "status",
+            "crossed_data_gap"
         ])
 
 
@@ -108,6 +109,19 @@ def detect_changes(appearances: pd.DataFrame, current: pd.DataFrame, update_date
         (更新後のappearances, 変更情報の辞書)
     """
     
+    # データ欠損期間の定義
+    DATA_GAP_START = "2018-08-01"
+    DATA_GAP_END = "2020-11-30"
+    
+    def crosses_data_gap(first_date: str, last_date: str) -> bool:
+        """データ欠損期間をまたぐかどうかをチェック"""
+        if not first_date or not last_date:
+            return False
+        try:
+            return first_date <= DATA_GAP_START and last_date >= DATA_GAP_END
+        except:
+            return False
+    
     # 既存データのキーセットを作成
     existing_keys = set()
     key_to_idx = {}  # キー → DataFrameのインデックス
@@ -126,6 +140,10 @@ def detect_changes(appearances: pd.DataFrame, current: pd.DataFrame, update_date
         current_keys.add(key)
         current_data[key] = row
     
+    # crossed_data_gap カラムが存在しない場合は追加
+    if "crossed_data_gap" not in appearances.columns:
+        appearances["crossed_data_gap"] = ""
+    
     # ----- 新規追加の検出 -----
     new_keys = current_keys - existing_keys
     new_records = []
@@ -142,7 +160,8 @@ def detect_changes(appearances: pd.DataFrame, current: pd.DataFrame, update_date
             "violation_law": row.get("violation_law", ""),
             "violation_summary": row.get("violation_summary", ""),
             "prosecution_date": row.get("prosecution_date", ""),
-            "status": "active"
+            "status": "active",
+            "crossed_data_gap": ""
         })
     
     # ----- 削除の検出 -----
@@ -165,6 +184,10 @@ def detect_changes(appearances: pd.DataFrame, current: pd.DataFrame, update_date
                         last_date = datetime.strptime(update_date, "%Y-%m-%d").date()
                         duration = (last_date - first_date).days
                         appearances.at[idx, "duration_days"] = str(duration)
+                        
+                        # データ欠損期間をまたぐかチェック
+                        if crosses_data_gap(first, update_date):
+                            appearances.at[idx, "crossed_data_gap"] = "true"
                     except ValueError:
                         pass
     
