@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>労働基準関係法令違反 公表事案アーカイブ</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <header>
+        <h1>労働基準関係法令違反 公表事案アーカイブ</h1>
+        <p>厚生労働省が公表する労働基準関係法令違反事案の時系列アーカイブ</p>
+    </header>
+    
+    <main>
+        <section class="stats-summary">
+            <h2>統計サマリー</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">総記録数</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">現在掲載中</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">掲載終了</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">-</span>
+                    <span class="stat-label">平均掲載日数</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="data-section">
+            <h2>年別推移</h2>
+            <div id="year-chart" class="chart-container">
+                <p class="no-data">データがありません</p>
+            </div>
+        </section>
+        
+        <section class="data-links">
+            <h2>データファイル</h2>
+            <ul>
+                <li><a href="data/appearances.json">appearances.json</a> - 全企業の掲載履歴</li>
+                <li><a href="data/statistics.json">statistics.json</a> - 統計データ</li>
+            </ul>
+            <p class="note">※ GitHubリポジトリからTSV形式でもダウンロードできます</p>
+        </section>
+        
+        <section class="about">
+            <h2>このプロジェクトについて</h2>
+            <p>
+                厚生労働省が公開する「労働基準関係法令違反に係る公表事案」のPDFをアーカイブし、
+                時系列での掲載状況を追跡するプロジェクトです。
+            </p>
+            <p>
+                厚労省の公表データは毎月更新され、一定期間後に削除されるため、
+                過去のデータを参照することが困難です。このリポジトリでは、PDFの原本保存と
+                掲載期間の追跡を行っています。
+            </p>
+            
+            <h3>データソース</h3>
+            <ul>
+                <li><a href="https://www.mhlw.go.jp/kinkyu/151106.html" target="_blank" rel="noopener">厚生労働省 - 長時間労働削減に向けた取組</a></li>
+                <li><a href="https://h-crisis.niph.go.jp/" target="_blank" rel="noopener">H-CRISIS（国立保健医療科学院）</a></li>
+                <li><a href="https://web.archive.org/" target="_blank" rel="noopener">Internet Archive Wayback Machine</a></li>
+            </ul>
+            
+            <h3>データ取得可能期間</h3>
+            <table class="coverage-table">
+                <tr><th>期間</th><th>ソース</th><th>状況</th></tr>
+                <tr><td>2017年5月〜2018年7月</td><td>Wayback Machine</td><td>✅</td></tr>
+                <tr><td>2018年8月〜2020年1月</td><td>-</td><td>❌ ギャップ</td></tr>
+                <tr><td>2020年2月〜現在</td><td>H-CRISIS / 厚労省</td><td>✅</td></tr>
+            </table>
+        </section>
+    </main>
+    
+    <footer>
+        <p>最終更新: 2025-12-20</p>
+        <p><a href="https://github.com/nyampire/jp-labor-violation-archive" target="_blank" rel="noopener">GitHub リポジトリ</a></p>
+    </footer>
+    
+    <script>
+        const bureauData = {};
+        const yearData = {};
+    </script>
+    <script src="assets/app.js"></script>
+</body>
+</html>
