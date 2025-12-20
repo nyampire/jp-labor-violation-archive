@@ -240,6 +240,116 @@ a:hover {
     font-size: 0.85rem;
 }
 
+/* テーブルコントロール */
+.table-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-box select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    min-width: 180px;
+}
+
+.table-info {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+/* 企業テーブル */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.companies-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.companies-table th,
+.companies-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.companies-table th {
+    background: var(--bg-color);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.companies-table tbody tr:hover {
+    background: var(--bg-color);
+}
+
+.companies-table td:first-child {
+    font-weight: 500;
+}
+
+/* ページネーション */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: var(--bg-color);
+    border-color: var(--primary-light);
+}
+
+.pagination button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* フッター */
 footer {
     text-align: center;
@@ -272,5 +382,22 @@ footer p {
     
     .stat-value {
         font-size: 1.5rem;
+    }
+    
+    .table-controls {
+        flex-direction: column;
+    }
+    
+    .filter-box select {
+        width: 100%;
+    }
+    
+    .companies-table {
+        font-size: 0.8rem;
+    }
+    
+    .companies-table th,
+    .companies-table td {
+        padding: 0.5rem;
     }
 }

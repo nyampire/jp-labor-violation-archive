@@ -22,11 +22,11 @@
                 </div>
                 <div class="stat-card">
                     <span class="stat-value">468</span>
-                    <span class="stat-label">現在掲載中</span>
+                    <span class="stat-label">現在の公表対象</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-value">3,312</span>
-                    <span class="stat-label">掲載終了</span>
+                    <span class="stat-label">公表終了</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-value">500.7</span>
@@ -39,6 +39,41 @@
             <h2>年別推移</h2>
             <div id="year-chart" class="chart-container">
                 <p class="no-data">データがありません</p>
+            </div>
+        </section>
+        
+        <section class="data-section">
+            <h2>現在の公表対象企業一覧</h2>
+            <div class="table-controls">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="企業名・所在地で検索...">
+                </div>
+                <div class="filter-box">
+                    <select id="bureau-filter">
+                        <option value="">全ての労働局</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-info">
+                <span id="showing-count">0</span> 件表示 / <span id="total-count">468</span> 件中
+            </div>
+            <div class="table-container">
+                <table id="companies-table" class="companies-table">
+                    <thead>
+                        <tr>
+                            <th>企業名</th>
+                            <th>所在地</th>
+                            <th>違反法条</th>
+                            <th>公表日</th>
+                        </tr>
+                    </thead>
+                    <tbody id="companies-tbody">
+                        <!-- JavaScriptで動的に生成 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- JavaScriptで動的に生成 -->
             </div>
         </section>
         
@@ -95,12 +130,12 @@
     </main>
     
     <footer>
-        <p>最終更新: 2025-12-20</p>
+        <p>最終更新: 2025-12-21</p>
         <p><a href="https://github.com/nyampire/jp-labor-violation-archive" target="_blank" rel="noopener">GitHub リポジトリ</a></p>
     </footer>
     
     <script>
-        const bureauData = {"大阪労働局": 274, "愛知労働局": 234, "北海道労働局": 217, "神奈川労働局": 206, "福岡労働局": 164, "東京労働局": 158, "兵庫労働局": 148, "静岡労働局": 121, "長野労働局": 120, "茨城労働局": 105, "岐阜労働局": 102, "広島労働局": 89, "熊本労働局": 81, "千葉労働局": 79, "三重労働局": 75, "京都労働局": 73, "埼玉労働局": 72, "福島労働局": 72, "栃木労働局": 69, "愛媛労働局": 66, "群馬労働局": 66, "沖縄労働局": 60, "岡山労働局": 59, "奈良労働局": 58, "青森労働局": 56, "滋賀労働局": 55, "大分労働局": 51, "岩手労働局": 50, "福井労働局": 50, "秋田労働局": 49, "和歌山労働局": 48, "宮城労働局": 48, "長崎労働局": 48, "山梨労働局": 46, "島根労働局": 46, "高知労働局": 45, "鹿児島労働局": 45, "宮崎労働局": 43, "山口労働局": 43, "鳥取労働局": 42, "佐賀労働局": 42, "新潟労働局": 41, "石川労働局": 40, "山形労働局": 35, "富山労働局": 31, "徳島労働局": 30, "香川労働局": 28};
+        const bureauData = {"大阪労働局": 274, "愛知労働局": 234, "北海道労働局": 217, "神奈川労働局": 206, "福岡労働局": 164, "東京労働局": 158, "兵庫労働局": 148, "静岡労働局": 121, "長野労働局": 120, "茨城労働局": 105, "岐阜労働局": 102, "広島労働局": 89, "熊本労働局": 81, "千葉労働局": 79, "三重労働局": 75, "京都労働局": 73, "福島労働局": 72, "埼玉労働局": 72, "栃木労働局": 69, "愛媛労働局": 66, "群馬労働局": 66, "沖縄労働局": 60, "岡山労働局": 59, "奈良労働局": 58, "青森労働局": 56, "滋賀労働局": 55, "大分労働局": 51, "福井労働局": 50, "岩手労働局": 50, "秋田労働局": 49, "長崎労働局": 48, "宮城労働局": 48, "和歌山労働局": 48, "島根労働局": 46, "山梨労働局": 46, "鹿児島労働局": 45, "高知労働局": 45, "宮崎労働局": 43, "山口労働局": 43, "佐賀労働局": 42, "鳥取労働局": 42, "新潟労働局": 41, "石川労働局": 40, "山形労働局": 35, "富山労働局": 31, "徳島労働局": 30, "香川労働局": 28};
         const yearData = {"2016": 146, "2017": 722, "2018": 318, "2019": 50, "2020": 442, "2021": 436, "2022": 431, "2023": 422, "2024": 451, "2025": 362};
     </script>
     <script src="assets/app.js"></script>
