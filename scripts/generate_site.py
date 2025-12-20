@@ -86,9 +86,15 @@ def generate_statistics(appearances: pd.DataFrame, changes: pd.DataFrame) -> dic
         year_counts = appearances_copy['year'].value_counts().sort_index().to_dict()
         stats["by_year"] = {k: v for k, v in year_counts.items() if k and k != 'nan' and k != ''}
     
-    # 平均掲載期間
+    # 平均掲載期間（データ欠損期間をまたぐレコードは除外）
     if 'duration_days' in appearances.columns:
-        durations = pd.to_numeric(appearances['duration_days'], errors='coerce')
+        # crossed_data_gap が true でないレコードのみを対象
+        if 'crossed_data_gap' in appearances.columns:
+            valid_records = appearances[appearances['crossed_data_gap'] != 'true']
+        else:
+            valid_records = appearances
+        
+        durations = pd.to_numeric(valid_records['duration_days'], errors='coerce')
         if durations.notna().any():
             stats["avg_duration_days"] = round(durations.mean(), 1)
     

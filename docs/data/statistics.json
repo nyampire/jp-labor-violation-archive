@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-12-21T08:20:41.920995",
+  "generated_at": "2025-12-21T08:23:51.050416",
   "total_records": 3780,
   "active_count": 468,
   "removed_count": 3312,
@@ -64,7 +64,7 @@
     "2024": 451,
     "2025": 362
   },
-  "avg_duration_days": 500.7,
+  "avg_duration_days": 414.8,
   "recent_changes": [
     {
       "date": "2018-07-01",
