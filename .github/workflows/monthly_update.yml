@@ -1,0 +1,105 @@
+name: Monthly PDF Update
+
+# 実行タイミング
+on:
+  schedule:
+    # 毎月1日と15日の 9:00 JST (0:00 UTC) に実行
+    # 厚労省のPDF更新は月末〜翌月初が多いため、1日に取得を試みる
+    # 15日は予備として設定
+    - cron: '0 0 1,15 * *'
+  
+  # 手動実行も可能（GitHub Actions画面から）
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    # GitHub Pagesへのデプロイ権限
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    steps:
+      # 1. リポジトリをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # 2. Python環境をセットアップ
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      # 3. 依存パッケージをインストール
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      # 4. 厚労省から最新PDFを取得
+      - name: Fetch latest PDF from MHLW
+        run: |
+          echo "Fetching latest PDF..."
+          python scripts/fetch_pdf.py --source latest
+        continue-on-error: true  # PDFが更新されていない場合も続行
+      
+      # 5. 最新のPDFから企業リストを抽出
+      - name: Extract companies from latest PDF
+        run: |
+          # archive/pdf 配下で最も新しいPDFを探す
+          LATEST_PDF=$(find archive/pdf -name "*.pdf" -type f 2>/dev/null | sort -r | head -1)
+          
+          if [ -n "$LATEST_PDF" ]; then
+            echo "Processing: $LATEST_PDF"
+            python scripts/extract_companies.py "$LATEST_PDF" -o timeline/current.tsv
+          else
+            echo "No PDF found in archive/pdf"
+          fi
+        continue-on-error: true
+      
+      # 6. 差分検出（掲載期間の追跡）
+      - name: Detect changes
+        run: |
+          if [ -f "timeline/current.tsv" ]; then
+            echo "Detecting changes..."
+            python scripts/diff_detect.py timeline/current.tsv
+          else
+            echo "No current.tsv found, skipping diff detection"
+          fi
+        continue-on-error: true
+      
+      # 7. GitHub Pagesのサイトを生成
+      - name: Generate GitHub Pages site
+        run: |
+          echo "Generating site..."
+          python scripts/generate_site.py
+      
+      # 8. 変更をコミット・プッシュ
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          
+          # 変更がある場合のみコミット
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update: $(date +%Y-%m-%d)"
+            git push
+          fi
+      
+      # 9. GitHub Pagesを設定
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      # 10. docsディレクトリをアーティファクトとしてアップロード
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      
+      # 11. GitHub Pagesにデプロイ
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
