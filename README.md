@@ -17,23 +17,15 @@
 3. **構造化データ**: TSV/JSON形式での機械可読データ
 4. **GitHub Pages**: 統計情報を閲覧できるWebサイト
 
-## 独自に提供する価値
-
-| データ | 厚労省 | 他サービス | このリポジトリ |
-|--------|:------:|:----------:|:--------------:|
-| 現在の掲載企業一覧 | ✅ | ✅ | ✅ |
-| 過去のPDF原本 | ❌ | ❌ | ✅ |
-| 初回掲載日 | ❌ | ❌ | ✅ |
-| 削除日 | ❌ | ❌ | ✅ |
-| 掲載期間（日数） | ❌ | ❌ | ✅ |
-
 ## データソースと取得可能期間
 
 | 期間 | ソース | 状況 |
 |------|--------|:----:|
 | 2017年5月〜2018年7月 | Internet Archive Wayback Machine | ✅ |
-| 2018年8月〜2020年1月 | （未発見） | ❌ |
-| 2020年2月〜現在 | H-CRISIS / 厚労省 | ✅ |
+| 2018年8月〜2020年11月 | - | ❌ データ欠損期間 |
+| 2020年12月〜現在 | H-CRISIS / 厚労省 | ✅ |
+
+⚠️ **データ欠損期間について**: 2018年8月〜2020年11月の期間はPDFデータが取得できていないため、この期間をまたぐレコードの `last_appeared`（掲載終了日）や `duration_days`（掲載日数）は不正確な可能性があります。該当レコードには `crossed_data_gap=true` フラグが付いています。
 
 ### 参照元リンク
 
@@ -71,6 +63,7 @@ jp-labor-violation-archive/
 │   ├── extract_companies.py    # PDF → TSV変換
 │   ├── diff_detect.py          # 差分検出・時系列追跡
 │   ├── fetch_pdf.py            # PDF取得（厚労省/Wayback/H-CRISIS）
+│   ├── cleanup_tsv.py          # データのLint・クリーンアップ
 │   └── generate_site.py        # GitHub Pages生成
 │
 ├── .github/workflows/
@@ -96,6 +89,7 @@ jp-labor-violation-archive/
 | violation_summary | 事案概要 | 賃金台帳の記入不備... |
 | prosecution_date | 送検日 | 2025-01-15 |
 | status | 状態 | active / removed |
+| crossed_data_gap | データ欠損期間をまたぐ | true / (空) |
 
 ### `archive/metadata.tsv`
 
@@ -161,29 +155,30 @@ GitHub Actionsにより、毎月1日と15日に自動更新されます。
 
 手動実行する場合は、GitHubリポジトリの Actions タブから `Monthly PDF Update` を選択し、`Run workflow` をクリックしてください。
 
-## 分析例
-
-このデータセットで可能になる分析：
-
-- 「公表から削除まで平均何日か？」
-- 「違反類型（安全衛生 vs 賃金未払い）で掲載期間に差があるか？」
-- 「特定の労働局で公表件数が多い時期はあるか？」
-- 「再掲載された企業はあるか？」
-
 ## 関連プロジェクト
 
 - [nyampire/jp_labor_act_illegal_list](https://github.com/nyampire/jp_labor_act_illegal_list) - 旧リポジトリ（2017-2018年の変換済みTSV）
-- [セルフキャリアデザイン協会 - 公表事案検索](https://self-cd.or.jp/violation-3) - 2020年以降の累積データ（Looker Studio）
+- [セルフキャリアデザイン協会 - 公表事案検索](https://self-cd.or.jp/violation-3) - より詳しい情報についてはこちら
 
 ## ライセンス
 
-- **データ**: 厚生労働省の公開情報に基づく
-- **スクリプト**: MIT License
+### データについて
+
+本リポジトリで提供するデータは、厚生労働省が公開する情報に基づいています。
+
+厚生労働省のコンテンツは「[公共データ利用規約（第1.0版）](https://www.digital.go.jp/resources/data_public_data_license_v1.0)」（PDL1.0）に準拠した利用条件の下で利用できます。
+
+- **出典**: 厚生労働省ホームページ（https://www.mhlw.go.jp/kinkyu/151106.html）
+- **利用規約**: https://www.mhlw.go.jp/chosakuken/index.html
+
+### スクリプトについて
+
+MIT License
 
 ## 貢献
 
 Issue、Pull Requestを歓迎します。特に以下を募集しています：
 
-- 2018年8月〜2020年1月のPDFデータ提供
+- 2018年8月〜2020年11月のPDFデータ提供
 - PDF解析精度の向上
 - データの検証・修正
