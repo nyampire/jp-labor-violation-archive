@@ -164,7 +164,7 @@ function renderTable() {
     for (const company of pageData) {
         const name = escapeHtml(company.company_name || '');
         const location = escapeHtml(company.location || '');
-        const law = escapeHtml(truncateText(company.violation_law || '', 30));
+        const law = escapeHtml(truncateText(company.violation_law || '', 50));
         const date = company.first_appeared || '';
         
         html += `
