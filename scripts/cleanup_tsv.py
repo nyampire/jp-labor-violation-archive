@@ -127,20 +127,24 @@ def detect_issues(df: pd.DataFrame) -> list:
         if not company_name or company_name == 'nan' or len(company_name.strip()) < 2:
             issues.append((idx, 'company_name', company_name, 'empty_or_too_short'))
         else:
+            # PDFタイトル行が混入している（削除対象）
+            if company_name in ['労働基準関係法令違反に係る公表事案', '公表事案']:
+                issues.append((idx, 'company_name', company_name, 'pdf_title_row'))
+            
             # 法律名が混入している
-            if re.search(r'^(労働安全衛生法|労働基準法|最低賃金法|労働者派遣法)', company_name):
+            elif re.search(r'^(労働安全衛生法|労働基準法|最低賃金法|労働者派遣法)', company_name):
                 issues.append((idx, 'company_name', company_name[:50], 'contains_law_name'))
             
             # 日付が混入している
-            if re.search(r'[HR]\d+\.\d+\.\d+', company_name):
+            elif re.search(r'[HR]\d+\.\d+\.\d+', company_name):
                 issues.append((idx, 'company_name', company_name[:50], 'contains_date'))
             
             # 異常に長い（100文字以上）
-            if len(company_name) > 100:
+            elif len(company_name) > 100:
                 issues.append((idx, 'company_name', company_name[:50] + '...', 'too_long'))
             
             # 数字のみ
-            if re.match(r'^\d+$', company_name.strip()):
+            elif re.match(r'^\d+$', company_name.strip()):
                 issues.append((idx, 'company_name', company_name, 'numeric_only'))
         
         # ===========================================
@@ -377,6 +381,11 @@ def fix_issues(df: pd.DataFrame, issues: list) -> pd.DataFrame:
         # 企業名が空または短すぎる
         elif issue_type == 'empty_or_too_short':
             print(f"  削除対象: 行{idx} company_name が空または短すぎる")
+            rows_to_drop.add(idx)
+        
+        # PDFタイトル行が混入
+        elif issue_type == 'pdf_title_row':
+            print(f"  削除対象: 行{idx} PDFタイトル行が混入: '{value}'")
             rows_to_drop.add(idx)
         
         # 企業名に法律名が混入

@@ -684,7 +684,7 @@ def generate_js(docs_dir: Path):
 let allCompanies = [];
 let filteredCompanies = [];
 let currentPage = 1;
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 15;
 
 document.addEventListener('DOMContentLoaded', function() {
     renderYearChart();
@@ -743,13 +743,38 @@ async function loadActiveCompanies() {
 }
 
 /**
- * 労働局フィルターを初期化
+ * 労働局フィルターを初期化（都道府県番号順）
  */
 function populateBureauFilter() {
     const select = document.getElementById('bureau-filter');
     if (!select) return;
     
-    const bureaus = [...new Set(allCompanies.map(c => c.labor_bureau).filter(b => b))].sort();
+    // 都道府県番号順（JIS X 0401）
+    const prefectureOrder = [
+        '北海道', '青森', '岩手', '宮城', '秋田', '山形', '福島',
+        '茨城', '栃木', '群馬', '埼玉', '千葉', '東京', '神奈川',
+        '新潟', '富山', '石川', '福井', '山梨', '長野',
+        '岐阜', '静岡', '愛知', '三重',
+        '滋賀', '京都', '大阪', '兵庫', '奈良', '和歌山',
+        '鳥取', '島根', '岡山', '広島', '山口',
+        '徳島', '香川', '愛媛', '高知',
+        '福岡', '佐賀', '長崎', '熊本', '大分', '宮崎', '鹿児島', '沖縄'
+    ];
+    
+    const bureaus = [...new Set(allCompanies.map(c => c.labor_bureau).filter(b => b))];
+    
+    // 都道府県番号順にソート
+    bureaus.sort((a, b) => {
+        const getPrefIndex = (bureau) => {
+            for (let i = 0; i < prefectureOrder.length; i++) {
+                if (bureau.includes(prefectureOrder[i])) {
+                    return i;
+                }
+            }
+            return 999; // 見つからない場合は最後
+        };
+        return getPrefIndex(a) - getPrefIndex(b);
+    });
     
     bureaus.forEach(bureau => {
         const option = document.createElement('option');
@@ -1014,6 +1039,17 @@ def main():
         
         # 現在の公表対象（active）のみを抽出
         active_df = appearances[appearances['status'] == 'active'].copy()
+        
+        # 不正なデータを除外（PDFタイトル行など）
+        invalid_names = [
+            '労働基準関係法令違反に係る公表事案',
+            '公表事案',
+        ]
+        active_df = active_df[~active_df['company_name'].isin(invalid_names)]
+        
+        # 企業名が空のレコードも除外
+        active_df = active_df[active_df['company_name'].str.strip() != '']
+        
         active_json = active_df.to_dict('records')
         with open(docs_dir / 'data' / 'active.json', 'w', encoding='utf-8') as f:
             json.dump(active_json, f, ensure_ascii=False, indent=2)
