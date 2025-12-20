@@ -5,6 +5,9 @@
 # 使用方法:
 #   ./scripts/process_all_pdfs.sh
 #
+# 環境変数:
+#   PYTHON - 使用するPythonコマンド（デフォルト: python3.9）
+#
 # 処理内容:
 #   1. archive/pdf 配下の全PDFをファイル名（日付順）でソート
 #   2. 各PDFから企業リストを抽出
@@ -12,6 +15,9 @@
 #
 
 set -e  # エラーで停止
+
+# Pythonコマンド（環境変数で上書き可能）
+PYTHON="${PYTHON:-python3.9}"
 
 # カラー出力
 RED='\033[0;31m'
@@ -35,7 +41,16 @@ echo -e "${BLUE}============================================================${NC
 echo ""
 echo "プロジェクトルート: $PROJECT_ROOT"
 echo "PDFディレクトリ: $PDF_DIR"
+echo "Pythonコマンド: $PYTHON"
 echo ""
+
+# Pythonの存在確認
+if ! command -v "$PYTHON" &> /dev/null; then
+    echo -e "${RED}エラー: $PYTHON が見つかりません${NC}"
+    echo "PYTHON環境変数で別のPythonを指定できます:"
+    echo "  PYTHON=python3 ./scripts/process_all_pdfs.sh"
+    exit 1
+fi
 
 # PDFファイルを検索（ファイル名でソート = 日付順）
 PDF_FILES=$(find "$PDF_DIR" -name "*.pdf" -type f 2>/dev/null | sort)
@@ -109,7 +124,7 @@ while IFS= read -r PDF_FILE; do
     
     # Step 1: PDFから企業リストを抽出
     echo "  抽出中..."
-    if python3.9 "$SCRIPT_DIR/extract_companies.py" "$PDF_FILE" -o "$CURRENT_TSV"; then
+    if $PYTHON "$SCRIPT_DIR/extract_companies.py" "$PDF_FILE" -o "$CURRENT_TSV"; then
         # 抽出件数を取得
         EXTRACTED=$(tail -n +2 "$CURRENT_TSV" 2>/dev/null | wc -l | tr -d ' ')
         echo -e "  ${GREEN}抽出完了: $EXTRACTED 件${NC}"
@@ -128,7 +143,7 @@ while IFS= read -r PDF_FILE; do
     
     # Step 2: 差分検出
     echo "  差分検出中..."
-    if python3.9 "$SCRIPT_DIR/diff_detect.py" "$CURRENT_TSV" -d "$DATE_PART"; then
+    if $PYTHON "$SCRIPT_DIR/diff_detect.py" "$CURRENT_TSV" -d "$DATE_PART"; then
         echo -e "  ${GREEN}差分検出完了${NC}"
         SUCCESS=$((SUCCESS + 1))
     else
@@ -162,6 +177,6 @@ fi
 
 echo ""
 echo "次のステップ:"
-echo "  1. python3.9 scripts/generate_site.py  # GitHub Pages生成"
+echo "  1. $PYTHON scripts/generate_site.py  # GitHub Pages生成"
 echo "  2. git add -A && git commit -m 'Add historical data'"
 echo "  3. git push"
