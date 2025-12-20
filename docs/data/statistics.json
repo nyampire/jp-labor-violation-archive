@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-  "generated_at": "2025-12-20T22:43:51.819446",
-=======
-  "generated_at": "2025-12-21T08:04:19.545526",
->>>>>>> 90b7c6d (Add company table with search and filter)
+  "generated_at": "2025-12-21T08:09:17.440101",
   "total_records": 3780,
   "active_count": 468,
   "removed_count": 3312,
