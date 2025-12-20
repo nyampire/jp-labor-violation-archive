@@ -43,37 +43,43 @@ import urllib.error
 MHLW_PAGE_URL = "https://www.mhlw.go.jp/kinkyu/151106.html"
 
 # H-CRISIS（国立保健医療科学院）に保存されているPDF
-# 前回のチャットで調査した結果
+# URLパターン: /wp-content/uploads/YYYY/MM/YYYYMMDDHHMMSS_content_XXXXXXXXX.pdf
+# または: /wp-content/uploads/YYYY/MM/XXXXXXXXX.pdf
 HCRISIS_PDFS = [
     {
-        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2020/11/000534084.pdf",
-        "date": "2020-11-30",
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2020/12/20201201121546_content_000534084.pdf",
+        "date": "2020-12-01",
         "period": "R1.11.1-R2.10.30"
     },
     {
-        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2021/05/000784067.pdf",
-        "date": "2021-05-31",
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2021/06/20210601090821_content_000776466.pdf",
+        "date": "2021-06-01",
         "period": "R2.5.1-R3.4.30"
     },
     {
-        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2022/06/000951073.pdf",
-        "date": "2022-06-30",
-        "period": "R3.5.1-R4.4.30"
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2022/07/20220701111119_content_000958620.pdf",
+        "date": "2022-07-01",
+        "period": "R3.6.1-R4.5.31"
     },
     {
-        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2022/12/001024283.pdf",
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2022/12/20221201110436_content_001018384.pdf",
         "date": "2022-12-01",
         "period": "R3.11.1-R4.10.31"
     },
     {
-        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2023/05/001099428.pdf",
-        "date": "2023-05-31",
-        "period": "R4.5.1-R5.4.30"
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2023/11/001150620.pdf",
+        "date": "2023-11-30",
+        "period": "R4.10.1-R5.9.30"
     },
     {
-        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2024/06/001261816.pdf",
-        "date": "2024-06-03",
-        "period": "R5.5.1-R6.4.30"
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2024/03/001150620.pdf",
+        "date": "2024-03-01",
+        "period": "R5.2.1-R6.1.31"
+    },
+    {
+        "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2025/04/001150620.pdf",
+        "date": "2025-03-31",
+        "period": "R6.3.1-R7.2.28"
     },
     {
         "url": "https://h-crisis.niph.go.jp/wp-content/uploads/2025/06/001483075.pdf",
