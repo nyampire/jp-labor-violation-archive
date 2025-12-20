@@ -15,6 +15,11 @@ jobs:
   update:
     runs-on: ubuntu-latest
     
+    # GitHub Pagesへのデプロイ用の環境設定
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     # GitHub Pagesへのデプロイ権限
     permissions:
       contents: write
@@ -102,4 +107,5 @@ jobs:
       
       # 11. GitHub Pagesにデプロイ
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
