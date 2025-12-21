@@ -62,9 +62,18 @@ def load_current_list(filepath: Path) -> pd.DataFrame:
         filepath: current.tsv のパス
     
     Returns:
-        企業リストのDataFrame
+        企業リストのDataFrame（空の場合は空のDataFrame）
     """
-    return pd.read_csv(filepath, sep='\t', dtype=str).fillna("")
+    # ファイルが空かどうかチェック
+    if filepath.stat().st_size == 0:
+        print(f"警告: {filepath} は空のファイルです")
+        return pd.DataFrame()
+    
+    try:
+        return pd.read_csv(filepath, sep='\t', dtype=str).fillna("")
+    except pd.errors.EmptyDataError:
+        print(f"警告: {filepath} にデータがありません")
+        return pd.DataFrame()
 
 
 # =============================================================================
@@ -282,6 +291,12 @@ def main():
     # データ読み込み
     appearances = load_appearances(appearances_path)
     current = load_current_list(current_path)
+    
+    # current.tsv が空の場合は終了（エラーではなく正常終了）
+    if current.empty:
+        print("最新の企業リストが空のため、処理をスキップします")
+        print("（PDFの取得に失敗した可能性があります）")
+        sys.exit(0)
     
     print(f"更新日: {update_date}")
     print(f"既存の掲載履歴: {len(appearances)} 件")

@@ -60,6 +60,39 @@ def is_valid_year(date_str: str) -> bool:
     return False
 
 
+def detect_corrupted_text(text: str) -> bool:
+    """
+    文字化けを検出する
+    
+    文字化けの特徴:
+    - 漢字とカタカナが不自然に交互に出現（例: 中愛部知エ県リ愛ア西セ市ンタ）
+    - 意味のある単語が形成されていない
+    
+    Returns:
+        True: 文字化けの可能性あり
+        False: 正常
+    """
+    if not text or len(text) < 5:
+        return False
+    
+    # パターン1: 漢字1-2文字とカタカナ1-2文字が交互に出現
+    # 例: 中愛部知エ県リ愛ア西セ市ンタ
+    alternating_pattern = re.findall(r'[一-龯]{1,2}[ァ-ヶー]{1,2}', text)
+    if len(alternating_pattern) >= 3:
+        return True
+    
+    # パターン2: カタカナが散在（3文字以上離れた位置に3回以上出現）
+    katakana_positions = [i for i, c in enumerate(text) if re.match(r'[ァ-ヶー]', c)]
+    if len(katakana_positions) >= 4:
+        # カタカナ間の距離をチェック
+        gaps = [katakana_positions[i+1] - katakana_positions[i] for i in range(len(katakana_positions)-1)]
+        # 平均的に離れている場合は文字化けの可能性
+        if len([g for g in gaps if g >= 2]) >= 3:
+            return True
+    
+    return False
+
+
 def detect_issues(df: pd.DataFrame) -> list:
     """
     データの問題を検出する
@@ -146,6 +179,10 @@ def detect_issues(df: pd.DataFrame) -> list:
             # 数字のみ
             elif re.match(r'^\d+$', company_name.strip()):
                 issues.append((idx, 'company_name', company_name, 'numeric_only'))
+            
+            # 文字化けの検出
+            elif detect_corrupted_text(company_name):
+                issues.append((idx, 'company_name', company_name[:50], 'corrupted'))
         
         # ===========================================
         # 4. 所在地の検証
@@ -170,21 +207,13 @@ def detect_issues(df: pd.DataFrame) -> list:
             if len(location) > 50:
                 issues.append((idx, 'location', location[:50] + '...', 'too_long'))
             
-            # 文字化けの可能性（カタカナとひらがなと漢字が混在して意味不明）
-            # ただし、スペースが混入しているだけの場合は別扱い
-            if re.search(r'[ァ-ヶ].*[ァ-ヶ].*[ァ-ヶ]', location) and len(location) > 10:
-                # 3つ以上のカタカナが散在している場合は文字化けの可能性
-                # ただし、都道府県名を含んでいれば軽微な問題として扱う
-                if re.search(prefectures, location):
-                    # スペースが含まれている場合は軽微な問題
-                    if ' ' in location or '　' in location:
-                        issues.append((idx, 'location', location[:50], 'contains_space'))
-                else:
-                    # 都道府県名もなく、カタカナが散在している場合は重大な文字化け
-                    issues.append((idx, 'location', location[:50], 'corrupted'))
-            elif ' ' in location or '　' in location:
-                # スペースが含まれている（軽微な問題）
+            # スペースが含まれている（軽微な問題）
+            if ' ' in location or '　' in location:
                 issues.append((idx, 'location', location[:50], 'contains_space'))
+            
+            # 文字化けの検出（新しい検出関数を使用）
+            if detect_corrupted_text(location):
+                issues.append((idx, 'location', location[:50], 'corrupted'))
         
         # ===========================================
         # 5. 労働局の検証
@@ -447,7 +476,11 @@ def fix_issues(df: pd.DataFrame, issues: list) -> pd.DataFrame:
                 df.at[idx, 'location'] = fixed
                 fixed_count += 1
             else:
-                print(f"  警告: 行{idx} location が文字化けの可能性（そのまま保持）: '{value}'")
+                print(f"  ⚠️ 警告: 行{idx} location が文字化けの可能性（そのまま保持）: '{value}'")
+        
+        # 企業名の文字化け（警告のみ、データは保持）
+        elif issue_type == 'corrupted' and column == 'company_name':
+            print(f"  ⚠️ 警告: 行{idx} company_name が文字化けの可能性（そのまま保持）: '{value}'")
     
     # 問題のある行を削除
     if rows_to_drop:

@@ -541,6 +541,11 @@ def main():
     else:
         df = extract_from_pdf(input_path)
     
+    # 抽出結果のチェック
+    if df.empty:
+        print(f"警告: {input_path} からデータを抽出できませんでした")
+        print("PDFの形式が変わった可能性があります")
+    
     # 出力先の決定
     if args.output:
         output_path = Path(args.output)
@@ -550,9 +555,13 @@ def main():
     # ディレクトリがなければ作成
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
-    # TSV出力
+    # TSV出力（空でも出力する）
     df.to_csv(output_path, sep='\t', index=False)
-    print(f"抽出完了: {len(df)} 件 → {output_path}")
+    
+    if df.empty:
+        print(f"空のファイルを出力: {output_path}")
+    else:
+        print(f"抽出完了: {len(df)} 件 → {output_path}")
 
 
 if __name__ == "__main__":
